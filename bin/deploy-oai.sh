@@ -1,8 +1,12 @@
 set -ex
 COMMIT_HASH=$1
 NODE_ROLE=$2
-BINDIR=`dirname $0`
+#BINDIR=`dirname $0`
 ETCDIR=/local/repository/etc
+SRCDIR=/var/tmp
+CFGDIR=/local/repository/etc
+CN5G_REPO="https://github.com/pragnyakiri/free5gc-compose"
+
 #source $BINDIR/common.sh
 
 #if [ -f $SRCDIR/oai-setup-complete ]; then
