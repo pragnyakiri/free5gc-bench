@@ -5,13 +5,13 @@ set -ex
 #ETCDIR=/local/repository/etc
 #source $BINDIR/common.sh
 
-if [ -f $SRCDIR/oai-setup-complete ]; then
-    echo "setup already ran; not running again"
+#if [ -f $SRCDIR/oai-setup-complete ]; then
+#    echo "setup already ran; not running again"
     #if [ $NODE_ROLE == "cn" ]; then
     #    sudo sysctl net.ipv4.conf.all.forwarding=1
     #    sudo iptables -P FORWARD ACCEPT
-    exit 0
-fi
+#    exit 0
+#fi
 
 function setup_cn_node {
     # Install docker, docker compose, wireshark/tshark
@@ -78,8 +78,8 @@ function setup_cn_node {
 
 }
 
-if [ $NODE_ROLE == "cn" ]; then
+#if [ $NODE_ROLE == "cn" ]; then
     #setup_cn_node
-fi
+#fi
 
-touch $SRCDIR/oai-setup-complete
+#touch $SRCDIR/oai-setup-complete
