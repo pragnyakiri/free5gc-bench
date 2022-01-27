@@ -135,11 +135,9 @@ Known Issues:
 
 BIN_PATH = "/local/repository/bin"
 ETC_PATH = "/local/repository/etc"
-LOWLAT_IMG = "urn:publicid:IDN+emulab.net+image+PowderTeam:U18LL-SRSLTE"
 UBUNTU_IMG = "urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD"
 UBUNTU1_IMG = "urn:publicid:IDN+emulab.net+image+reu2020:ubuntu1864std50023generic"
 COMP_MANAGER_ID = "urn:publicid:IDN+emulab.net+authority+cm"
-DEFAULT_NR_RAN_HASH = "8082394371e5abcec8a7ab4cf501d79df6acd3e5"
 DEFAULT_NR_CN_HASH = "1d0ab4b54b3a0ab247d1a2d140b44b3ddd155fa8"
 OAI_DEPLOY_SCRIPT = os.path.join(BIN_PATH, "deploy-oai.sh")
 
@@ -155,13 +153,6 @@ node_types = [
     ("d430", "Emulab, d430"),
     ("d740", "Emulab, d740"),
 ]
-pc.defineParameter(
-    name="sdr_nodetype",
-    description="Type of compute node paired with the SDRs",
-    typ=portal.ParameterType.STRING,
-    defaultValue=node_types[1],
-    legalValues=node_types
-)
 
 pc.defineParameter(
     name="cn_nodetype",
@@ -185,24 +176,8 @@ pc.defineParameter(
 )
 
 pc.defineParameter(
-    name="oai_ran_commit_hash",
-    description="Commit hash for OAI RAN",
-    typ=portal.ParameterType.STRING,
-    defaultValue="",
-    advanced=True
-)
-
-pc.defineParameter(
     name="oai_cn_commit_hash",
     description="Commit hash for OAI (5G)CN",
-    typ=portal.ParameterType.STRING,
-    defaultValue="",
-    advanced=True
-)
-
-pc.defineParameter(
-    name="sdr_compute_image",
-    description="Image to use for compute connected to SDRs",
     typ=portal.ParameterType.STRING,
     defaultValue="",
     advanced=True
@@ -228,70 +203,12 @@ else:
     oai_cn_hash = DEFAULT_NR_CN_HASH
 
 cmd = '{} "{}" {}'.format(OAI_DEPLOY_SCRIPT, oai_cn_hash, role)
-cn_node.addService(rspec.Execute(shell="sh", command=cmd))
+cn_node.addService(rspec.Execute(shell="bash", command=cmd))
 
-
-if params.oai_ran_commit_hash:
-    oai_ran_hash = params.oai_ran_commit_hash
-else:
-    oai_ran_hash = DEFAULT_NR_RAN_HASH
-
-role = "nodeb"
-nodeb = request.RawPC("gnb-comp")
-nodeb.component_manager_id = COMP_MANAGER_ID
-nodeb.hardware_type = params.sdr_nodetype
-if params.sdr_compute_image:
-    nodeb.disk_image = params.sdr_compute_image
-else:
-    nodeb.disk_image = LOWLAT_IMG
 
 nodeb_cn_if = nodeb.addInterface("nodeb-cn-if")
 nodeb_cn_if.addAddress(rspec.IPv4Address("192.168.1.2", "255.255.255.0"))
 cn_link.addInterface(nodeb_cn_if)
-
-nodeb_usrp_if = nodeb.addInterface("nodeb-usrp-if")
-nodeb_usrp_if.addAddress(rspec.IPv4Address("192.168.40.1", "255.255.255.0"))
-
-cmd = '{} "{}" {}'.format(OAI_DEPLOY_SCRIPT, oai_ran_hash, role)
-nodeb.addService(rspec.Execute(shell="bash", command=cmd))
-nodeb.addService(rspec.Execute(shell="bash", command="/local/repository/bin/tune-cpu.sh"))
-nodeb.addService(rspec.Execute(shell="bash", command="/local/repository/bin/tune-sdr-iface.sh"))
-
-nodeb_sdr = request.RawPC("gnb-sdr")
-nodeb_sdr.component_manager_id = COMP_MANAGER_ID
-nodeb_sdr.component_id = BENCH_SDR_IDS[params.bench_id][0]
-nodeb_sdr_if = nodeb_sdr.addInterface("nodeb-sdr-if")
-
-nodeb_sdr_link = request.Link("nodeb-sdr-link")
-nodeb_sdr_link.bandwidth = 10*1000*1000
-nodeb_sdr_link.addInterface(nodeb_usrp_if)
-nodeb_sdr_link.addInterface(nodeb_sdr_if)
-
-role = "ue"
-ue = request.RawPC("nrue-comp")
-ue.component_manager_id = COMP_MANAGER_ID
-ue.hardware_type = params.sdr_nodetype
-if params.sdr_compute_image:
-    ue.disk_image = params.sdr_compute_image
-else:
-    ue.disk_image = LOWLAT_IMG
-
-ue_usrp_if = ue.addInterface("ue-usrp-if")
-ue_usrp_if.addAddress(rspec.IPv4Address("192.168.40.1", "255.255.255.0"))
-cmd = '{} "{}" {}'.format(OAI_DEPLOY_SCRIPT, oai_ran_hash, role)
-ue.addService(rspec.Execute(shell="bash", command=cmd))
-ue.addService(rspec.Execute(shell="bash", command="/local/repository/bin/tune-cpu.sh"))
-ue.addService(rspec.Execute(shell="bash", command="/local/repository/bin/tune-sdr-iface.sh"))
-
-ue_sdr = request.RawPC("nrue-sdr")
-ue_sdr.component_manager_id = COMP_MANAGER_ID
-ue_sdr.component_id = BENCH_SDR_IDS[params.bench_id][1]
-ue_sdr_if = ue_sdr.addInterface("ue-sdr-if")
-
-ue_sdr_link = request.Link("ue-sdr-link")
-ue_sdr_link.bandwidth = 10*1000*1000
-ue_sdr_link.addInterface(ue_usrp_if)
-ue_sdr_link.addInterface(ue_sdr_if)
 
 tour = IG.Tour()
 tour.Description(IG.Tour.MARKDOWN, tourDescription)

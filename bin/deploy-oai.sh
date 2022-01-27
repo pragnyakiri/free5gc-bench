@@ -10,14 +10,6 @@ if [ -f $SRCDIR/oai-setup-complete ]; then
     #if [ $NODE_ROLE == "cn" ]; then
     #    sudo sysctl net.ipv4.conf.all.forwarding=1
     #    sudo iptables -P FORWARD ACCEPT
-    elif [ $NODE_ROLE == "nodeb" ]; then
-        LANIF=`ip r | awk '/192\.168\.1\.2/{print $3}'`
-        if [ ! -z $LANIF ]; then
-          echo LAN IFACE is $LANIF...
-          echo adding route to CN
-          sudo ip route add 192.168.70.128/26 via 192.168.1.1 dev $LANIF
-        fi
-    fi
     exit 0
 fi
 
@@ -86,59 +78,8 @@ function setup_cn_node {
 
 }
 
-function setup_ran_node {
-    echo cloning and building oai ran...
-    cd $SRCDIR
-    git clone $OAI_RAN_MIRROR oairan
-    cd oairan
-    git checkout $COMMIT_HASH
-
-    if [ $COMMIT_HASH == "efc696cce989d7434604cacc1a77790f5fdda70c" ]; then
-      git apply /local/repository/etc/oai/gnb_drb_and_ue_stall.patch
-    fi
-
-    source oaienv
-    cd cmake_targets
-    ./build_oai -I
-    ./build_oai -w USRP --build-lib all $BUILD_ARGS
-    echo cloning and building oai ran... done.
-}
-
-function configure_nodeb {
-    echo configuring nodeb...
-    mkdir -p $SRCDIR/etc/oai
-    cp -r $ETCDIR/oai/* $SRCDIR/etc/oai/
-    LANIF=`ip r | awk '/192\.168\.1\.2/{print $3}'`
-    if [ ! -z $LANIF ]; then
-      echo LAN IFACE is $LANIF.. updating nodeb config
-      find $SRCDIR/etc/oai/ -type f -exec sed -i "s/LANIF/$LANIF/" {} \;
-      echo adding route to CN
-      sudo ip route add 192.168.70.128/26 via 192.168.1.1 dev $LANIF
-    else
-      echo No LAN IFACE.. not updating nodeb config
-    fi
-    echo configuring nodeb... done.
-}
-
-function configure_ue {
-    echo configuring ue...
-    mkdir -p $SRCDIR/etc/oai
-    cp -r $ETCDIR/oai/* $SRCDIR/etc/oai/
-    echo configuring ue... done.
-}
-
 if [ $NODE_ROLE == "cn" ]; then
     #setup_cn_node
-elif [ $NODE_ROLE == "nodeb" ]; then
-    BUILD_ARGS="--gNB"
-    setup_ran_node
-    configure_nodeb
-elif [ $NODE_ROLE == "ue" ]; then
-    BUILD_ARGS="--nrUE"
-    setup_ran_node
-    configure_ue
 fi
-
-
 
 touch $SRCDIR/oai-setup-complete
