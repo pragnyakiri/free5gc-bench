@@ -14,6 +14,7 @@ if [ -f $SRCDIR/oai-setup-complete ]; then
     if [ $NODE_ROLE == "cn" ]; then
         sudo sysctl net.ipv4.conf.all.forwarding=1
         sudo iptables -P FORWARD ACCEPT
+    fi
     exit 0
 fi
 
@@ -28,14 +29,12 @@ function setup_cn_node {
       lsb-release
 
     printf "adding docker gpg key"
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    #until curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -; do
-    #    printf '.'
-    #    sleep 2
-    #done
+    until curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -; do
+        printf '.'
+        sleep 2
+    done
 
-    #sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     sudo add-apt-repository -y ppa:wireshark-dev/stable
     echo "wireshark-common wireshark-common/install-setuid boolean false" | sudo debconf-set-selections
 
@@ -50,11 +49,10 @@ function setup_cn_node {
     sudo usermod -aG docker $USER
 
     printf "installing compose"
-    #until sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose; do
-    #    printf '.'
-    #    sleep 2
-    #done
-    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
+    until sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose; do
+        printf '.'
+        sleep 2
+    done
 
     sudo chmod +x /usr/local/bin/docker-compose
 
@@ -76,14 +74,14 @@ function setup_cn_node {
     git checkout $COMMIT_HASH
     #./scripts/syncComponents.sh
     echo cloning and syncing free5gc-compose... done.
-    make base
-    docker-compose build
+    sudo make base
+    sudo docker-compose build
     echo setting up cn node... done.
 
 }
 
-#if [ $NODE_ROLE == "cn" ]; then
-#    setup_cn_node
-#fi
+if [ $NODE_ROLE == "cn" ]; then
+    setup_cn_node
+fi
 
 touch $SRCDIR/oai-setup-complete
