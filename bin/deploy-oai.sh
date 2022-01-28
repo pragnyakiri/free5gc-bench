@@ -15,7 +15,7 @@ if [ -f $SRCDIR/oai-setup-complete ]; then
         sudo sysctl net.ipv4.conf.all.forwarding=1
         sudo iptables -P FORWARD ACCEPT
     fi
-    exit 0
+    #exit 0
 fi
 
 function setup_cn_node {
@@ -81,7 +81,7 @@ function setup_cn_node {
 }
 
 if [ $NODE_ROLE == "cn" ]; then
-    setup_cn_node
+    #setup_cn_node
 fi
 
 touch $SRCDIR/oai-setup-complete
