@@ -80,8 +80,8 @@ function setup_cn_node {
 
 }
 
-if [ $NODE_ROLE == "cn" ]; then
+#if [ $NODE_ROLE == "cn" ]; then
     #setup_cn_node
-fi
+#fi
 
-touch $SRCDIR/oai-setup-complete
+#touch $SRCDIR/oai-setup-complete
