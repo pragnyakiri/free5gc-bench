@@ -51,11 +51,12 @@ function setup_cn_node {
 
     echo "installing compose"
     #until sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    until sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
-    do
-        echo "."
-        sleep 2
-    done
+    #until sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
+    #do
+    #    echo "."
+    #    sleep 2
+    #done
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
 
     #sudo chmod +x /usr/local/bin/docker-compose
 
