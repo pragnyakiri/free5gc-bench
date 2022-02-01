@@ -48,24 +48,24 @@ function setup_cn_node {
     sudo systemctl enable docker
     sudo usermod -aG docker $USER
 
-    printf "installing compose"
-    until sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose; do
-        printf '.'
-        sleep 2
-    done
+    #printf "installing compose"
+    #until sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose; do
+    #    printf '.'
+    #    sleep 2
+    #done
 
-    sudo chmod +x /usr/local/bin/docker-compose
+    #sudo chmod +x /usr/local/bin/docker-compose
 
-    echo creating demo-oai bridge network...
-    sudo docker network create \
-      --driver=bridge \
-      --subnet=192.168.70.128/26 \
-      -o "com.docker.network.bridge.name"="demo-oai" \
-      demo-oai-public-net
-    echo creating demo-oai bridge network... done.
+    #echo creating demo-oai bridge network...
+    #sudo docker network create \
+    #  --driver=bridge \
+    #  --subnet=192.168.70.128/26 \
+    #  -o "com.docker.network.bridge.name"="demo-oai" \
+    #  demo-oai-public-net
+    #echo creating demo-oai bridge network... done.
 
-    sudo sysctl net.ipv4.conf.all.forwarding=1
-    sudo iptables -P FORWARD ACCEPT
+    #sudo sysctl net.ipv4.conf.all.forwarding=1
+    #sudo iptables -P FORWARD ACCEPT
 
     #echo cloning and syncing free5gc-compose...
     #cd $SRCDIR
