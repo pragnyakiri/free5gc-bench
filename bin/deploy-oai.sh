@@ -67,21 +67,20 @@ function setup_cn_node {
     sudo sysctl net.ipv4.conf.all.forwarding=1
     sudo iptables -P FORWARD ACCEPT
 
-    echo cloning and syncing free5gc-compose...
-    cd $SRCDIR
-    git clone $CN5G_REPO free5gc-compose
-    cd free5gc-compose
-    git checkout $COMMIT_HASH
-    #./scripts/syncComponents.sh
-    echo cloning and syncing free5gc-compose... done.
-    sudo make base
-    sudo docker-compose build
-    echo setting up cn node... done.
+    #echo cloning and syncing free5gc-compose...
+    #cd $SRCDIR
+    #git clone $CN5G_REPO free5gc-compose
+    #cd free5gc-compose
+    #git checkout $COMMIT_HASH
+    #echo cloning and syncing free5gc-compose... done.
+    #sudo make base
+    #sudo docker-compose build
+    #echo setting up cn node... done.
 
 }
 
-#if [[ $NODE_ROLE == "cn" ]]; then
-#    setup_cn_node
-#fi
+if [[ $NODE_ROLE == "cn" ]]; then
+    setup_cn_node
+fi
 
-#touch $SRCDIR/oai-setup-complete
+touch $SRCDIR/oai-setup-complete
