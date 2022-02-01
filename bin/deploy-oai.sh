@@ -35,16 +35,16 @@ function setup_cn_node {
         sleep 2
     done
 
-    #sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-    #sudo add-apt-repository -y ppa:wireshark-dev/stable
-    #echo "wireshark-common wireshark-common/install-setuid boolean false" | sudo debconf-set-selections
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    sudo add-apt-repository -y ppa:wireshark-dev/stable
+    echo "wireshark-common wireshark-common/install-setuid boolean false" | sudo debconf-set-selections
 
-    #sudo DEBIAN_FRONTEND=noninteractive apt-get update && sudo apt-get install -y \
-    #    docker-ce \
-    #    docker-ce-cli \
-    #    containerd.io \
-    #    wireshark \
-    #    tshark
+    sudo DEBIAN_FRONTEND=noninteractive apt-get update && sudo apt-get install -y \
+        docker-ce \
+        docker-ce-cli \
+        containerd.io \
+        wireshark \
+        tshark
 
     #sudo systemctl enable docker
     #sudo usermod -aG docker $USER
