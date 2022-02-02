@@ -47,6 +47,7 @@ function setup_cn_node {
         tshark
 
     sudo systemctl enable docker
+    echo "sudo usermod -aG docker $USER"
     sudo usermod -aG docker $USER
 
     echo "installing compose"
