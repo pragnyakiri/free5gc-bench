@@ -48,7 +48,7 @@ function setup_cn_node {
 
     sudo systemctl enable docker
     echo "sudo usermod -aG docker $USER"
-    sudo usermod -aG docker $USER
+    #sudo usermod -aG docker $USER
 
     echo "installing compose"
     #until sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -59,28 +59,28 @@ function setup_cn_node {
     #done
     sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
 
-    #sudo chmod +x /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
 
-    #echo creating demo-oai bridge network...
-    #sudo docker network create \
-    #  --driver=bridge \
-    #  --subnet=192.168.70.128/26 \
-    #  -o "com.docker.network.bridge.name"="demo-oai" \
-    #  demo-oai-public-net
-    #echo creating demo-oai bridge network... done.
+    echo creating demo-oai bridge network...
+    sudo docker network create \
+     --driver=bridge \
+     --subnet=192.168.70.128/26 \
+     -o "com.docker.network.bridge.name"="demo-oai" \
+     demo-oai-public-net
+    echo creating demo-oai bridge network... done.
 
-    #sudo sysctl net.ipv4.conf.all.forwarding=1
-    #sudo iptables -P FORWARD ACCEPT
+    sudo sysctl net.ipv4.conf.all.forwarding=1
+    sudo iptables -P FORWARD ACCEPT
 
-    #echo cloning and syncing free5gc-compose...
-    #cd $SRCDIR
-    #git clone $CN5G_REPO free5gc-compose
-    #cd free5gc-compose
-    #git checkout $COMMIT_HASH
-    #echo cloning and syncing free5gc-compose... done.
-    #sudo make base
-    #sudo docker-compose build
-    #echo setting up cn node... done.
+    echo cloning and syncing free5gc-compose...
+    cd $SRCDIR
+    git clone $CN5G_REPO free5gc-compose
+    cd free5gc-compose
+    git checkout $COMMIT_HASH
+    echo cloning and syncing free5gc-compose... done.
+    sudo make base
+    sudo docker-compose build
+    echo setting up cn node... done.
 
 }
 
